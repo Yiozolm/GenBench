@@ -2,14 +2,18 @@ import os
 import requests
 import re
 from datetime import datetime
+from dotenv import load_dotenv
 from issue_classifier import classify_issue_with_confidence
 
+# 加载环境变量
+load_dotenv()
+
 # --- 1. 配置区域 ---
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', 'YOUR_PERSONAL_ACCESS_TOKEN') 
-REPO_OWNER = 'Microsoft'
-REPO_NAME = 'vscode'
-SINCE_DATE = '2025-09-01'
-BASE_OUTPUT_DIR = 'github_issues_output'
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+REPO_OWNER = os.getenv('REPO_OWNER', 'Microsoft')
+REPO_NAME = os.getenv('REPO_NAME', 'vscode')
+SINCE_DATE = os.getenv('SINCE_DATE', '2025-09-01')
+BASE_OUTPUT_DIR = os.getenv('BASE_OUTPUT_DIR', 'github_issues_output')
 
 # --- 脚本主要逻辑 ---
 
@@ -131,8 +135,8 @@ def save_issue_as_markdown(issue):
         print(f"保存文件失败: {filepath}. 错误: {e}")
 
 if __name__ == '__main__':
-    if 'YOUR_PERSONAL_ACCESS_TOKEN' in GITHUB_TOKEN or not GITHUB_TOKEN:
-        print("错误: 请在脚本的配置区域填入您的 GitHub Personal Access Token！")
+    if not GITHUB_TOKEN:
+        print("错误: 请在 .env 文件中设置 GITHUB_TOKEN！")
     else:
         # 1. 先获取本地所有已存在的 issue
         existing_map = get_existing_issue_map(BASE_OUTPUT_DIR)

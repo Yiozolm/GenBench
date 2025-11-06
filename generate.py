@@ -2,18 +2,20 @@ import os
 import re
 import sys
 import json
+from dotenv import load_dotenv
 from zai import ZhipuAiClient
+
+# 加载环境变量
+load_dotenv()
 
 # --- 1. 配置区域 ---
 # GitHub Issue 文件夹
-BASE_DIR = 'github_issues_output'
-
-PROBLEMS_OUTPUT_DIR = 'generated_problems'
-
-SUITABLE_ISSUES_FILE = 'suitable_programming_issues_llm.json'
+BASE_DIR = os.getenv('BASE_DIR', 'github_issues_output')
+PROBLEMS_OUTPUT_DIR = os.getenv('PROBLEMS_OUTPUT_DIR', 'generated_problems')
+SUITABLE_ISSUES_FILE = os.getenv('SUITABLE_ISSUES_FILE', 'suitable_programming_issues_llm.json')
 
 ZHIPU_API_KEY = os.getenv("ZHIPU_API_KEY")
-AI_MODEL = "glm-4.6" # 您可以根据需要更改模型，例如 glm-4v, glm-3-turbo 等
+AI_MODEL = os.getenv("GEN_MODEL", "glm-4.6")  # 您可以根据需要更改模型，例如 glm-4v, glm-3-turbo 等
 
 def get_suitable_issue_ids(json_file):
     suitable_ids = set()
@@ -180,7 +182,7 @@ AC = [
 
 if __name__ == '__main__':
     if not ZHIPU_API_KEY:
-        print("错误: 环境变量 'ZHIPU_API_KEY' 未设置。")
+        print("错误: 请在 .env 文件中设置 ZHIPU_API_KEY！")
         sys.exit(1)
 
     ai_client = ZhipuAiClient(api_key=ZHIPU_API_KEY)

@@ -7,11 +7,15 @@ import re
 import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 from zai import ZhipuAiClient
 from typing import List, Dict, Any
 from datetime import datetime
 
-MODEL = 'glm-4.5-air'
+# 加载环境变量
+load_dotenv()
+
+MODEL = os.getenv('EVAL_MODEL', 'glm-4.5-air')
 
 def find_markdown_files(input_path: str) -> List[str]:
     """
@@ -462,9 +466,9 @@ def analyze_issues_with_llm(issues: List[Dict[str, Any]], reference_dir: str = "
     reference_problems = load_reference_problems(reference_dir)
 
     # Initialize the client
-    api_key = os.getenv('ANTHROPIC_AUTH_TOKEN')
+    api_key = os.getenv('ZHIPU_API_KEY')
     if not api_key:
-        print("Error: ANTHROPIC_AUTH_TOKEN environment variable not set")
+        print("错误: 请在 .env 文件中设置 ZHIPU_API_KEY！")
         return suitable_issues
 
     client = ZhipuAiClient(api_key=api_key)
